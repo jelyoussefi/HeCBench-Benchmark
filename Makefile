@@ -22,9 +22,13 @@ DOCKER_RUN_PARAMS= \
 
 
 MIN_INDEX ?= 0
-MAX_INDEX ?= 10
+MAX_INDEX ?= 20
 INCLUDE ?= ""
-EXCLUDE ?= "bm3d burger"
+EXCLUDE ?= "amgmk ans axhelm b+tree backprop b+tree  backprop  bfs  cfd \
+			dwt2d  gaussian  heartwall  hotspot  hotspot3D  huffman  hybridsort  \
+			kmeans  lavaMD  leukocyte  lud  mummergpu  myocyte  nn  nw  \
+			particlefilter  pathfinder  srad  streamcluster"
+
 #----------------------------------------------------------------------------------------------------------------------
 # Targets
 #----------------------------------------------------------------------------------------------------------------------
@@ -56,7 +60,7 @@ syclomatic: build
 
 bash: build
 	@$(call msg, Loging  ...)
-	@docker run ${DOCKER_RUN_PARAMS} bash
+	@docker run ${DOCKER_RUN_PARAMS} bash -c 'source /opt/intel/oneapi/setvars.sh --force > /dev/null && bash'
 	
 
 #----------------------------------------------------------------------------------------------------------------------

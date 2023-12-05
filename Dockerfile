@@ -20,6 +20,7 @@ RUN apt-get -y install cuda-toolkit-11-8
 RUN echo "icpx -fsycl \$@" > /opt/intel/oneapi/dpcpp-ct/latest/bin/clang-tool && chmod +x /opt/intel/oneapi/dpcpp-ct/latest/bin/clang-tool
 RUN apt install -y libgl1 libglib2.0-0  libx11-dev  python3-tk libcanberra-gtk-module libcanberra-gtk3-module libqt5widgets5
 RUN pip3 install tqdm matplotlib PyQt5 cprint
+RUN apt install -y rename
 ENV XDG_RUNTIME_DIR='/tmp/runtime-root'
 
 
