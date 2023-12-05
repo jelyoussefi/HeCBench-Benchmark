@@ -1,0 +1,3 @@
+[submodule "HeCBench"]
+	path = HeCBench
+	url = https://github.com/titeup/HeCBench
