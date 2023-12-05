@@ -55,7 +55,6 @@ syclomatic: build
 			--exclude=${EXCLUDE} \
 			--min_index=${MIN_INDEX} \
 			--max_index=${MAX_INDEX} \
-			--verbose \
 		'
 
 bash: build

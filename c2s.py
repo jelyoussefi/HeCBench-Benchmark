@@ -68,14 +68,20 @@ class Cuda2Sycl():
 				with open(sycl_makefile) as fr:
 					for line in fr:
 						line = line.replace("clang++", "icpx")
-						if line.startswith("VERIFY"):
+						if line.startswith("#include"):
+							line = line.replace(".dp.", ".")
+						elif line.startswith("VERIFY"):
 							line = line.replace("no", "yes")
 						elif line.startswith("GCC_TOOLCHAIN"):
 							continue
 						fw.write(line)
-			rename_cmd = f'cd {self.df.loc[index, "syclomatic"]} && '
-			rename_cmd = rename_cmd + "find . -depth -execdir rename 's/.dp././g' '{}' \;"
+
+			cd_cmd = f'cd {self.df.loc[index, "syclomatic"]} && '
+			rename_cmd = cd_cmd + " find . -depth -execdir rename 's/.dp././g' '{}' \;"
 			os.system(rename_cmd)
+
+			modify_include_cmd = cd_cmd + "find . -type f -regex '.*\.\(hpp\|cpp\|c\|h\)' -exec sed -i -e '/^#include/s/\.dp\./\./g' {} +"
+			os.system(modify_include_cmd)
 
 
 		self.process(pre_process, post_process, name="Converting", update='converted')
