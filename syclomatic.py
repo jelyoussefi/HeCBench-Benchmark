@@ -8,7 +8,7 @@ from c2s import Cuda2Sycl
 
 
 class Syclomatic(Cuda2Sycl):
-	def __init__(self, input_dir, include="", exclude="", min_index=0, max_index=-1, verbose=False):
+	def __init__(self, input_dir, include="", exclude="", min_index=None, max_index=None, verbose=False):
 		super().__init__(input_dir, include=include, exclude=exclude, 
 						 min_index=min_index, max_index=max_index, verbose=verbose)
 	
@@ -22,9 +22,9 @@ def main(
 		in_root: str,
 		include: str="",
 		exclude: str="",
-		min_index: int=0,
-		max_index: int=-1,
-		verbose: bool=False,
+		min_index: str=None,
+		max_index: str=None,
+		verbose: int=0,
 		**kwargs
 		):
 	

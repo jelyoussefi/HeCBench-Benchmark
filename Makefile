@@ -22,9 +22,10 @@ DOCKER_RUN_PARAMS= \
 
 
 MIN_INDEX ?= 0
-MAX_INDEX ?= 20
+MAX_INDEX ?= 10
 INCLUDE ?= ""
-EXCLUDE ?= "amgmk ans axhelm b+tree backprop b+tree  backprop  bfs  cfd \
+EXCLUDE ?= "aop burger bonds cm atomicPerf bn ced gamma-correction \
+			amgmk ans axhelm b+tree backprop b+tree  backprop  bfs  cfd \
 			dwt2d  gaussian  heartwall  hotspot  hotspot3D  huffman  hybridsort  \
 			kmeans  lavaMD  leukocyte  lud  mummergpu  myocyte  nn  nw  \
 			particlefilter  pathfinder  srad  streamcluster"

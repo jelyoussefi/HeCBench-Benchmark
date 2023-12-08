@@ -15,8 +15,9 @@ import logging
 
 
 class Cuda2Sycl():
-	def __init__(self, input_dir, include="", exclude="", min_index=0, max_index=-1, verbose=False):
+	def __init__(self, input_dir, include="", exclude="", min_index=None, max_index=None, verbose=False):
 		self.lock = Lock()
+		self.input_dir = input_dir
 		self.verbose = verbose
 
 		to_include = include.split()
@@ -27,8 +28,9 @@ class Cuda2Sycl():
 		cuda_dirs = sorted(glob.glob(os.path.join(input_dir,"*-cuda"), recursive=False))
 		sycl_dirs = glob.glob(os.path.join(input_dir,"*-sycl"), recursive=False)
 
-		if max_index == -1:
-			max_index = len(cuda_dirs)
+		min_index = self.get_index(min_index, cuda_dirs, 0)
+		max_index = self.get_index(max_index, cuda_dirs, len(cuda_dirs))
+
 		for idx in range(min_index, max_index):
 			cuda_dir = cuda_dirs[idx]
 			base_name = os.path.basename(cuda_dir).split('-')[0]
@@ -108,7 +110,7 @@ class Cuda2Sycl():
 
 			return self.commands['run'].format(os.path.dirname(syclomatic_makefile), run)
 
-		self.process(execute_, name="Executing", check='compiled', update='executed', timeout=120, verbose=False)
+		self.process(execute_, name="Executing", check='compiled', update='executed', set_time=True, timeout=120, verbose=False)
 
 		print(self.df)
 
@@ -118,7 +120,7 @@ class Cuda2Sycl():
 			return makefiles[0]
 		return None
 	
-	def process(self, pre_process_fct, post_process_fct=None, name="",  timeout=0, check=None, update=None, verbose=False):
+	def process(self, pre_process_fct, post_process_fct=None, name="",  timeout=0, check=None, update=None, set_time=False, verbose=False):
 		total = len(self.df)
 
 		def process(istart, istop, progress=None):
@@ -143,8 +145,8 @@ class Cuda2Sycl():
 							out, err = proc.communicate()
 							if timer is not None:
 								timer.cancel()
-
-							self.df.loc[idx, 'time'] = perf_counter() - start_time
+							if set_time:
+								self.df.loc[idx, 'time'] = perf_counter() - start_time
 							errcode = proc.returncode
 							if errcode:
 								if self.verbose:
@@ -165,7 +167,7 @@ class Cuda2Sycl():
 						progress.update(1)
 
 		with tqdm(total=total, desc=name.ljust(15), colour='#008888') as progress:                         
-			with cf.ThreadPoolExecutor(max_workers=8) as executor:
+			with cf.ThreadPoolExecutor() as executor:
 				workers = executor._max_workers
 
 				chunck_size = total // workers
@@ -177,6 +179,18 @@ class Cuda2Sycl():
 
 				cf.wait(futures)
 
+	def get_index(self, index, cuda_dirs, default=0):
+		if index is not None:
+			if not str(index).isnumeric():
+				cuda_path = os.path.join(self.input_dir,f"{index}-cuda")
+				if cuda_path in cuda_dirs:
+					index = cuda_dirs.index(cuda_path)
+				else:
+					index = default
+		else:
+			index = default
+
+		return index
 
 	def plot(self):
 		total = len(self.df)
