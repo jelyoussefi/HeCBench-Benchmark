@@ -10,6 +10,8 @@ CURRENT_DIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 #----------------------------------------------------------------------------------------------------------------------
 DOCKER_IMAGE_NAME=hecbench-image
 export DOCKER_BUILDKIT=1
+export UID=$(id -u)
+export GID=$(id -g)
 
 DOCKER_RUN_PARAMS= \
 	-it --rm -a stdout -a stderr -e DISPLAY=${DISPLAY} -e NO_AT_BRIDGE=1  \
@@ -17,12 +19,14 @@ DOCKER_RUN_PARAMS= \
 	-v ${CURRENT_DIR}:/workspace \
 	-v /tmp/.X11-unix:/tmp/.X11-unix   -v ${HOME}/.Xauthority:/home/root/.Xauthority \
 	-e OverrideDefaultFP64Settings=1 -e IGC_EnableDPEmulation=1 \
+	-e MPLCONFIGDIR="/tmp" \
 	-w /workspace \
+	--user $(shell id -u):$(shell id -g) \
 	${DOCKER_IMAGE_NAME}
 
 
-MIN_INDEX ?= 0
-MAX_INDEX ?= 10
+MIN_INDEX ?= "accuracy"
+MAX_INDEX ?= "ace"
 INCLUDE ?= ""
 EXCLUDE ?= "aop burger bonds cm atomicPerf bn ced gamma-correction \
 			amgmk ans axhelm b+tree backprop b+tree  backprop  bfs  cfd \

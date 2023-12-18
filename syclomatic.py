@@ -8,9 +8,11 @@ from c2s import Cuda2Sycl
 
 
 class Syclomatic(Cuda2Sycl):
-	def __init__(self, input_dir, include="", exclude="", min_index=None, max_index=None, verbose=False):
+	def __init__(self, input_dir, include="", exclude="", min_index=None, max_index=None, 
+					   visualize=False, verbose=False):
 		super().__init__(input_dir, include=include, exclude=exclude, 
-						 min_index=min_index, max_index=max_index, verbose=verbose)
+						 min_index=min_index, max_index=max_index, 
+						 name="syclomatic", visualize=visualize, verbose=verbose)
 	
 	def run(self):
 		self.convert()
@@ -24,12 +26,14 @@ def main(
 		exclude: str="",
 		min_index: str=None,
 		max_index: str=None,
+		visualize: bool=False,
 		verbose: int=0,
 		**kwargs
 		):
 	
 	syclomatic = Syclomatic(in_root, include=include, exclude=exclude, 
-						    min_index=min_index, max_index=max_index, verbose=verbose)
+						    min_index=min_index, max_index=max_index, 
+						   	visualize=visualize, verbose=verbose)
 	syclomatic.run()
 	
 

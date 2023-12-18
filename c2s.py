@@ -15,9 +15,12 @@ import logging
 
 
 class Cuda2Sycl():
-	def __init__(self, input_dir, include="", exclude="", min_index=None, max_index=None, verbose=False):
+	def __init__(self, input_dir, include="", exclude="", min_index=None, max_index=None, 
+				       name="c2s", visualize=False, verbose=False):
 		self.lock = Lock()
 		self.input_dir = input_dir
+		self.name = name
+		self.visualize = visualize
 		self.verbose = verbose
 
 		to_include = include.split()
@@ -31,7 +34,7 @@ class Cuda2Sycl():
 		min_index = self.get_index(min_index, cuda_dirs, 0)
 		max_index = self.get_index(max_index, cuda_dirs, len(cuda_dirs))
 
-		for idx in range(min_index, max_index):
+		for idx in range(min_index, max_index+1):
 			cuda_dir = cuda_dirs[idx]
 			base_name = os.path.basename(cuda_dir).split('-')[0]
 			if len(to_include) > 0 and base_name not in to_include:
@@ -193,6 +196,9 @@ class Cuda2Sycl():
 		return index
 
 	def plot(self):
+
+		self.df.to_csv(self.name+'.csv', index = None, header=True)
+
 		total = len(self.df)
 		compiled = len(self.df[self.df['compiled']==True])
 		executed = len(self.df[self.df['executed']==True])
@@ -207,7 +213,11 @@ class Cuda2Sycl():
 		values = list(data.values())
 
 		plt.bar(range(len(data)), values, tick_label=names)
-		plt.title("HeCBench & Syclomatic")
-		plt.show()
+		plt.title(self.name.capitalize())
+
+		plt.savefig(self.name+'.png')
+
+		if self.visualize:
+			plt.show()
 
 
